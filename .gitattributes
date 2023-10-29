@@ -1,0 +1,4 @@
+# https://git-scm.com/docs/gitattributes
+* text=auto eol=lf
+*.{cmd,[cC][mM][dD]} text=auto eol=crlf
+*.{bat,[bB][aA][tT]} text=auto eol=crlf

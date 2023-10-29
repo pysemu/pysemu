@@ -1,0 +1,118 @@
+# https://taskfile.dev/usage/
+# https://pkg.go.dev/text/template
+# https://go-task.github.io/slim-sprig/
+# 
+version: "3"
+
+vars:
+  PYTHON: python
+  POETRY: "poetry"
+  RUN_PREFIX: "{{.POETRY}} run"
+  RUN_PYTHON: "{{.RUN_PREFIX}} python"
+  PY_SOURCE: "src tests"
+
+tasks:
+  configure:
+    desc: Configure this project
+    cmds:
+      - "{{.POETRY}} install {{.CLI_ARGS}}"
+  black:
+    desc: Run black
+    cmds:
+      - '{{.RUN_PYTHON}} -m black {{if (ne (.CHECK | default "false") "false")}}--check --diff {{end}}{{.CLI_ARGS | default .PY_SOURCE}}'
+  ruff:
+    desc: Run ruff
+    cmds:
+      - '{{.RUN_PREFIX}} ruff check --config pyproject.toml {{if (mustFromJson (.FIX | default "false"))}}--fix {{end}}{{.CLI_ARGS | default .PY_SOURCE}}'
+  mypy:
+    desc: Run mypy
+    cmds:
+      - "{{.RUN_PYTHON}} -m mypy --show-error-context --show-error-codes {{.CLI_ARGS}}"
+  codespell:
+    desc: Run codespell
+    cmds:
+      - "{{.RUN_PREFIX}} codespell {{.CLI_ARGS | default .PY_SOURCE}}"
+  pip-audit:
+    desc: Run pip audit
+    cmds:
+      - |
+        {{.POETRY}} export --without-hashes --with dev --format requirements.txt | \
+          {{.RUN_PYTHON}} -m pip_audit --requirement /dev/stdin --no-deps --strict --desc on
+  test:
+    desc: Run tests
+    cmds:
+      - "{{.RUN_PYTHON}} -m pytest {{.CLI_ARGS}}"
+  validate:static:
+    desc: Perform static validation
+    cmds:
+      - task: mypy
+      # - task: codespell
+      - task: black
+        vars: { CHECK: true }
+      - task: ruff
+      # - task: pip-audit
+  validate:fix:
+    desc: Fix auto-fixable validation errors.
+    cmds:
+      - task: ruff
+        vars: { FIX: true }
+      - task: black
+  validate:
+    desc: Perform all validation
+    cmds:
+      - task: validate:static
+      - task: test
+  fix-and-validate:
+    desc: Perform all validation
+    cmds:
+      - task: validate:fix
+      - task: validate
+  poetry:clean:
+    desc: Clean poetry
+    cmds:
+      - "{{.POETRY}} env remove --all"
+  clean:
+    desc: Clean everything
+    cmds:
+      - task: _rimraf
+        vars: { RIMRAF_TARGET: ".mypy_cache" }
+      - task: _rimraf
+        vars: { RIMRAF_TARGET: ".pytest_cache" }
+      - task: _rimraf
+        vars: { RIMRAF_TARGET: ".venv" }
+      - task: poetry:clean
+  default:
+    desc: Run validate
+    cmds:
+      - task: validate
+  poetry:
+    desc: Run poetry
+    cmds:
+      - "{{.POETRY}} {{.CLI_ARGS}}"
+  cli:
+    desc: Run cli
+    cmds:
+      - "{{.RUN_PREFIX}} pysemu-cli {{.CLI_ARGS}}"
+  venv:run:
+    desc: Run args in the venv
+    cmds:
+      - "{{.RUN_PREFIX}} {{.CLI_ARGS}}"
+  venv:python:
+    desc: Run python in the venv
+    cmds:
+      - "{{.RUN_PYTHON}} {{.CLI_ARGS}}"
+  _rimraf:
+    # This task is a utility task for recursively removing directories, it is
+    # similar to rm -rf but not identical and it should work wherever there is
+    # a python interpreter. The name is inspired by
+    # <https://www.npmjs.com/package/rimraf>.
+    - cmd: |
+        {{.PYTHON}} -c '
+        from pathlib import Path;
+        import sys, shutil;
+        for path in sys.argv[1:]:
+          if Path(path).exists():
+            sys.stderr.write(f"removing {path}\n")
+            shutil.rmtree(path, ignore_errors=True)
+        ' {{.RIMRAF_TARGET}}
+# 

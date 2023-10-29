@@ -1,0 +1,117 @@
+# https://python-poetry.org/docs/pyproject/
+# https://www.python.org/dev/peps/pep-0621/
+[tool.poetry]
+name = "pysemu"
+version = "0.0.0"
+description = ""
+authors = []
+license = "Apache-2.0"
+readme = "README.md"
+packages = [
+    {include = "*", from = "src"},
+]
+
+[tool.poetry.scripts]
+"pysemu-cli" = "pysemu.cli:main"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+pydantic = "^2.4.2"
+PyYAML = "^6.0.1"
+# 
+typer = "^0.9.0"
+# 
+# 
+structlog = "^23.2.0"
+# 
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.10.0"
+codespell = "^2.2.6"
+mypy = "^1.6.1"
+pytest = "^7.4.2"
+pytest-cov = "^4.1.0"
+types-PyYAML = "^6.0.12.12"
+pip-audit = "^2.6.1"
+ruff = "^0.1.0"
+typing-extensions = "^4.8.0"
+# 
+
+
+[tool.ruff]
+# https://beta.ruff.rs/docs/configuration/
+preview = true
+target-version = "py39"
+select = [
+    "E", # pycodestyle errors
+    "W", # pycodestyle warnings
+    "F", # Pyflakes
+    "I", # isort
+    "N", # pep8-naming
+    "RUF", # Ruff
+    "UP", # pyupgrade
+    "FA", # flake8-future-annotations
+]
+
+ignore = [
+    "E501", # line too long:
+    # Disabled based on black recommendations
+    # https://black.readthedocs.io/en/stable/faq.html#why-are-flake8-s-e203-and-w503-violated
+    "E203", # whitespace before ':'
+    "E231", # missing whitespace after ','
+    "E251", # Unexpected spaces around keyword / parameter equals
+    # Disabled because this targets Python 3.9 or later
+    "UP007", # Use `X | Y` for type annotations
+]
+
+extend-exclude = [
+    "examples/**",
+]
+
+# Same as Black.
+line-length = 88
+
+[tool.ruff.per-file-ignores]
+
+
+[tool.coverage.report]
+# https://coverage.readthedocs.io/en/coverage-5.0/config.html
+show_missing = true
+
+[tool.pytest.ini_options]
+# https://docs.pytest.org/en/stable/customize.html
+# https://docs.pytest.org/en/stable/reference.html#configuration-options
+testpaths = ["tests"]
+addopts = ["--cov-config=pyproject.toml", "--cov=src"]
+log_format = "%(asctime)s %(process)d %(thread)d %(levelno)03d:%(levelname)-8s %(name)-12s %(module)s:%(lineno)s:%(funcName)s %(message)s"
+log_date_format = "%Y-%m-%dT%H:%M:%S"
+log_cli_format = "%(asctime)s %(process)d %(thread)d %(levelno)03d:%(levelname)-8s %(name)-12s %(module)s:%(lineno)s:%(funcName)s %(message)s"
+log_cli_date_format = "%Y-%m-%dT%H:%M:%S"
+
+[tool.mypy]
+# https://mypy.readthedocs.io/en/stable/config_file.html
+files = "src,tests"
+mypy_path = "src"
+python_version = "3.9"
+strict = true
+warn_unreachable = true
+warn_unused_configs = true
+explicit_package_bases = true
+namespace_packages = true
+plugins = ["pydantic.mypy"]
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
+warn_untyped_fields = true
+
+# 
+
+# 
+
+[build-system]
+# 
+requires = ["setuptools","poetry-core>=1.0.0"]
+# 
+build-backend = "poetry.core.masonry.api"

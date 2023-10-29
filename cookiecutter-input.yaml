@@ -1,0 +1,17 @@
+default_context:
+  build_tool: go-task
+  cli_name: pysemu-cli
+  git_commit: y
+  git_init: y
+  project_dirname: pysemu
+  project_name: pysemu
+  project_short_description: A python library for working with the W3C semantic web
+    ecosystem including RDF, SPARQL, SHACL and OWL
+  project_url: https://github.com/pysemu/pysemu
+  python_package_fqname: pysemu
+  python_version: '3.9'
+  sdpx_license_identifier: Apache-2.0
+  use_oci_devtools: n
+  use_poetry_dynamic_versioning: n
+  variant: basic
+  version: 0.0.0

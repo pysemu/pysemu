@@ -1,0 +1,24 @@
+# https://docs.docker.com/compose/compose-file/compose-file-v3/
+version: "3"
+
+services:
+  python-devtools:
+    build:
+      context: devtools
+      dockerfile: Dockerfile
+    working_dir: /srv/workspace
+    volumes:
+      - .:/srv/workspace:z
+      - ${XDG_CACHE_HOME:-xdg-cache-home}:/root/.cache
+      - dot-venv:/srv/workspace/.venv
+      - dot-mypy-cache:/srv/workspace/.mypy_cache
+      - dot-pytest-cache:/srv/workspace/.pytest_cache
+      - dot-tox:/srv/workspace/.tox
+
+volumes:
+  xdg-cache-home: {}
+  dot-venv: {}
+  dot-mypy-cache: {}
+  dot-pytest-cache: {}
+  dot-tox: {}
+

@@ -1,0 +1,26 @@
+{
+  "template": "/home/iwana/sw/d/github.com/aucampia/cookiecutter-python",
+  "commit": "ea01e7b4145b8e6da4c07ae66fe690b36b5ab826",
+  "checkout": null,
+  "context": {
+    "cookiecutter": {
+      "project_name": "pysemu",
+      "python_package_fqname": "pysemu",
+      "project_url": "https://github.com/pysemu/pysemu",
+      "project_dirname": "pysemu",
+      "project_short_description": "A python library for working with the W3C semantic web ecosystem including RDF, SPARQL, SHACL and OWL",
+      "cli_name": "pysemu-cli",
+      "sdpx_license_identifier": "Apache-2.0",
+      "version": "0.0.0",
+      "python_version": "3.9",
+      "git_init": "y",
+      "git_commit": "y",
+      "variant": "basic",
+      "build_tool": "go-task",
+      "use_poetry_dynamic_versioning": "n",
+      "use_oci_devtools": "n",
+      "_template": "/home/iwana/sw/d/github.com/aucampia/cookiecutter-python"
+    }
+  },
+  "directory": null
+}
